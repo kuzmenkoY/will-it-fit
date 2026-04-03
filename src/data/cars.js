@@ -354,6 +354,75 @@ export const cars = {
     rearFolded: { length: 0.30, width: 0.50, height: 0.15, offsetX: 0, offsetY: 0.25, offsetZ: 1.70 },
     color: '#1e3a8a',
   },
+
+  // ── Aston Martin ─────────────────────────────────────────
+  'aston-martin-vantage': {
+    name: 'Aston Martin Vantage Roadster',
+    modelPath: '/models/aston_martin_vantage_opt.glb',
+    exterior: { length: 4.465, width: 1.942, height: 1.273 },
+    trunk: { length: 0.55, width: 0.90, height: 0.30, offsetX: 0, offsetY: 0.25, offsetZ: -1.60 },
+    rearFolded: { length: 0.55, width: 0.90, height: 0.30, offsetX: 0, offsetY: 0.25, offsetZ: -1.60 },
+    color: '#059669',
+  },
+
+  // ── McLaren ─────────────────────────────────────────────
+  'mclaren-720s': {
+    name: 'McLaren 720S (2017)',
+    modelPath: '/models/mclaren_720s_2017_opt.glb',
+    exterior: { length: 4.543, width: 2.059, height: 1.196 },
+    trunk: { length: 0.45, width: 0.80, height: 0.25, offsetX: 0, offsetY: 0.25, offsetZ: 1.60 },
+    rearFolded: { length: 0.45, width: 0.80, height: 0.25, offsetX: 0, offsetY: 0.25, offsetZ: 1.60 },
+    color: '#f97316',
+  },
+
+  // ── Maserati ────────────────────────────────────────────
+  'maserati-granturismo': {
+    name: 'Maserati GranTurismo MC',
+    modelPath: '/models/maserati_granturismo_opt.glb',
+    exterior: { length: 4.881, width: 1.847, height: 1.353 },
+    trunk: { length: 0.75, width: 1.10, height: 0.38, offsetX: 0, offsetY: 0.28, offsetZ: -1.70 },
+    rearFolded: { length: 0.75, width: 1.10, height: 0.38, offsetX: 0, offsetY: 0.28, offsetZ: -1.70 },
+    color: '#1e3a8a',
+  },
+
+  // ── Nissan ──────────────────────────────────────────────
+  'nissan-370z': {
+    name: 'Nissan 370Z',
+    modelPath: '/models/nissan_370z_opt.glb',
+    exterior: { length: 4.250, width: 1.845, height: 1.315 },
+    trunk: { length: 0.65, width: 1.05, height: 0.35, offsetX: 0, offsetY: 0.28, offsetZ: -1.55 },
+    rearFolded: { length: 0.65, width: 1.05, height: 0.35, offsetX: 0, offsetY: 0.28, offsetZ: -1.55 },
+    color: '#f59e0b',
+  },
+  'nissan-gtr-r35': {
+    name: 'Nissan GT-R R35',
+    modelPath: '/models/nissan_gtr_r35_opt.glb',
+    exterior: { length: 4.710, width: 1.895, height: 1.370 },
+    trunk: { length: 0.75, width: 1.15, height: 0.40, offsetX: 0, offsetY: 0.28, offsetZ: -1.60 },
+    rearFolded: { length: 0.75, width: 1.15, height: 0.40, offsetX: 0, offsetY: 0.28, offsetZ: -1.60 },
+    color: '#a3a3a3',
+  },
+
+  // ── Chevrolet (additional) ──────────────────────────────
+  'chevrolet-corvette-c8': {
+    name: 'Chevrolet Corvette C8 Stingray (2020)',
+    modelPath: '/models/chevrolet_corvette_c8_2020_opt.glb',
+    exterior: { length: 4.630, width: 1.934, height: 1.234 },
+    trunk: { length: 0.50, width: 0.85, height: 0.30, offsetX: 0, offsetY: 0.25, offsetZ: 1.60 },
+    rearFolded: { length: 0.50, width: 0.85, height: 0.30, offsetX: 0, offsetY: 0.25, offsetZ: 1.60 },
+    color: '#dc2626',
+  },
+
+  // ── Tesla (additional) ──────────────────────────────────
+  'tesla-cybertruck': {
+    name: 'Tesla Cybertruck',
+    modelPath: '/models/tesla_cybertruck_opt.glb',
+    exterior: { length: 5.683, width: 2.201, height: 1.791 },
+    // Vault (truck bed) dimensions
+    trunk: { length: 1.83, width: 1.52, height: 0.55, offsetX: 0, offsetY: 0.60, offsetZ: -1.40 },
+    rearFolded: { length: 1.83, width: 1.52, height: 0.55, offsetX: 0, offsetY: 0.60, offsetZ: -1.40 },
+    color: '#78716c',
+  },
 };
 
 export const defaultCar = 'toyota-supra-mk4';
