@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
-import useStore, { getTrunkWithOverrides } from '../store/useStore';
+import useStore from '../store/useStore';
 import { cars } from '../data/cars';
 
 export default function DraggableObject({ obj, isSelected }) {
@@ -10,9 +10,9 @@ export default function DraggableObject({ obj, isSelected }) {
   const selectedCarId = useStore((s) => s.selectedCarId);
   const rearSeatsDown = useStore((s) => s.rearSeatsDown);
   const setFitResult = useStore((s) => s.setFitResult);
-  const trunkOverrides = useStore((s) => s.trunkOverrides);
+  const computedTrunk = useStore((s) => s.computedTrunk);
   const car = cars[selectedCarId];
-  const trunk = getTrunkWithOverrides(car, selectedCarId, rearSeatsDown, trunkOverrides);
+  const trunk = computedTrunk || (rearSeatsDown ? car.rearFolded : car.trunk);
 
   const [fits, setFits] = useState(null);
 
