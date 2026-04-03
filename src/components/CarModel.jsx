@@ -16,14 +16,9 @@ export default function CarModel() {
   const car = cars[selectedCarId];
   const trunk = rearSeatsDown ? car.rearFolded : car.trunk;
 
-  // Load car exterior
   const gltf = useLoader(GLTFLoader, car.modelPath, (loader) => {
     loader.setDRACOLoader(dracoLoader);
   });
-
-  // Load parametric trunk model (Build123D generated)
-  const trunkPath = rearSeatsDown ? car.trunkFoldedModelPath : car.trunkModelPath;
-  const trunkGltf = useLoader(GLTFLoader, trunkPath);
 
   const scaledScene = useMemo(() => {
     const scene = gltf.scene.clone(true);
@@ -44,38 +39,61 @@ export default function CarModel() {
     return scene;
   }, [gltf, car]);
 
-  // Scale and position the parametric trunk model
+  const hasTrunkModel = !!(rearSeatsDown ? car.trunkFoldedModelPath : car.trunkModelPath);
+
+  return (
+    <group ref={groupRef}>
+      <primitive object={scaledScene} />
+      <TransparentOverride scene={scaledScene} color={car.color} />
+
+      {/* Parametric trunk model if available, otherwise simple wireframe box */}
+      {hasTrunkModel ? (
+        <Suspense fallback={<BoxTrunk trunk={trunk} />}>
+          <ParametricTrunk car={car} rearSeatsDown={rearSeatsDown} trunk={trunk} />
+        </Suspense>
+      ) : (
+        <BoxTrunk trunk={trunk} />
+      )}
+    </group>
+  );
+}
+
+// Parametric trunk loaded from Build123D GLB
+function ParametricTrunk({ car, rearSeatsDown, trunk }) {
+  const trunkPath = rearSeatsDown ? car.trunkFoldedModelPath : car.trunkModelPath;
+  const trunkGltf = useLoader(GLTFLoader, trunkPath);
+
   const scaledTrunk = useMemo(() => {
     const scene = trunkGltf.scene.clone(true);
-
-    // Build123D exports in mm, we need meters
-    // The trunk model is centered at origin, scale from mm to m
-    scene.scale.setScalar(0.001);
-
-    // Position it in the car's trunk location
-    scene.position.set(
-      trunk.offsetX,
-      trunk.offsetY + trunk.height / 2,
-      trunk.offsetZ
-    );
-
+    scene.scale.setScalar(0.001); // mm to meters
+    scene.position.set(trunk.offsetX, trunk.offsetY + trunk.height / 2, trunk.offsetZ);
     return scene;
   }, [trunkGltf, trunk]);
 
   return (
-    <group ref={groupRef}>
-      {/* Car exterior */}
-      <primitive object={scaledScene} />
-      <TransparentOverride scene={scaledScene} color={car.color} />
-
-      {/* Parametric trunk shape (Build123D) */}
+    <group>
       <primitive object={scaledTrunk} />
       <TrunkOverride scene={scaledTrunk} />
     </group>
   );
 }
 
-// Make car exterior transparent with edge lines
+// Simple wireframe box trunk (fallback)
+function BoxTrunk({ trunk }) {
+  return (
+    <group>
+      <mesh position={[trunk.offsetX, trunk.offsetY + trunk.height / 2, trunk.offsetZ]}>
+        <boxGeometry args={[trunk.width, trunk.height, trunk.length]} />
+        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={0.8} />
+      </mesh>
+      <mesh position={[trunk.offsetX, trunk.offsetY + 0.005, trunk.offsetZ]}>
+        <boxGeometry args={[trunk.width - 0.01, 0.01, trunk.length - 0.01]} />
+        <meshStandardMaterial color="#00ff88" transparent opacity={0.2} />
+      </mesh>
+    </group>
+  );
+}
+
 function TransparentOverride({ scene, color }) {
   useEffect(() => {
     const edgeMaterial = new THREE.LineBasicMaterial({
@@ -122,14 +140,12 @@ function TransparentOverride({ scene, color }) {
   return null;
 }
 
-// Make trunk model green wireframe with slight fill
 function TrunkOverride({ scene }) {
   useEffect(() => {
     const trunkEdgeMaterial = new THREE.LineBasicMaterial({
       color: '#00ff88',
       transparent: true,
       opacity: 0.9,
-      linewidth: 2,
     });
 
     const trunkFillMaterial = new THREE.MeshStandardMaterial({

@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Original unoptimized 3D models (large files, only keep optimized _opt versions)
+public/models/raw/
+public/models/toyota_supra.glb
+public/models/bmw_2018.glb
+public/models/bmw_x6m.glb
+public/models/tesla_roadster_2020.glb
+public/models/volkswagen_golf_ii.glb
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Boilerplate
+src/App.css
+src/assets/hero.png
+scripts/test_build123d.py
