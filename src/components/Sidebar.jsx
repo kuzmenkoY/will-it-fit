@@ -147,15 +147,7 @@ export default function Sidebar() {
             checked={rearSeatsDown}
             onChange={toggleRearSeats}
           />
-          Fold rear seats down
-        </label>
-        <label style={{ ...styles.checkbox, marginTop: 6 }}>
-          <input
-            type="checkbox"
-            checked={trunkOpen}
-            onChange={toggleTrunkOpen}
-          />
-          Open trunk (cut-away view)
+          Fold rear seats (larger cargo area)
         </label>
       </div>
 

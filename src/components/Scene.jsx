@@ -128,7 +128,6 @@ export default function Scene() {
       <Canvas
         camera={{ position: [4, 3, 4], fov: 50 }}
         style={{ background: '#1a1a2e' }}
-        gl={{ localClippingEnabled: true }}
       >
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
