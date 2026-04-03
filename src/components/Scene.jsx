@@ -4,7 +4,7 @@ import { OrbitControls, Grid, Environment, Html } from '@react-three/drei';
 import CarModel from './CarModel';
 import DraggableObject from './DraggableObject';
 import ObjectMover from './ObjectMover';
-import useStore from '../store/useStore';
+import useStore, { getTrunkWithOverrides } from '../store/useStore';
 import { cars } from '../data/cars';
 
 function ScaleReference() {
@@ -33,8 +33,9 @@ function ScaleReference() {
 function TrunkLabel() {
   const selectedCarId = useStore((s) => s.selectedCarId);
   const rearSeatsDown = useStore((s) => s.rearSeatsDown);
+  const trunkOverrides = useStore((s) => s.trunkOverrides);
   const car = cars[selectedCarId];
-  const trunk = rearSeatsDown ? car.rearFolded : car.trunk;
+  const trunk = getTrunkWithOverrides(car, selectedCarId, rearSeatsDown, trunkOverrides);
 
   return (
     <Html
@@ -77,8 +78,9 @@ export default function Scene() {
   const selectedPlacedIndex = useStore((s) => s.selectedPlacedIndex);
   const selectedCarId = useStore((s) => s.selectedCarId);
   const rearSeatsDown = useStore((s) => s.rearSeatsDown);
+  const trunkOverrides = useStore((s) => s.trunkOverrides);
   const car = cars[selectedCarId];
-  const trunk = rearSeatsDown ? car.rearFolded : car.trunk;
+  const trunk = getTrunkWithOverrides(car, selectedCarId, rearSeatsDown, trunkOverrides);
   const controlsRef = useRef();
   const cameraRef = useRef();
 

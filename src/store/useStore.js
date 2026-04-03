@@ -36,6 +36,28 @@ const useStore = create((set, get) => ({
   toggleTrunkOpen: () => set((s) => ({ trunkOpen: !s.trunkOpen })),
   setCarOpacity: (v) => set({ carOpacity: v }),
 
+  // Per-car trunk offset overrides (persisted in localStorage)
+  trunkOverrides: JSON.parse(localStorage.getItem('trunkOverrides') || '{}'),
+  setTrunkOverride: (carId, field, value) => set((s) => {
+    const overrides = { ...s.trunkOverrides };
+    if (!overrides[carId]) overrides[carId] = {};
+    overrides[carId][field] = value;
+    localStorage.setItem('trunkOverrides', JSON.stringify(overrides));
+    return { trunkOverrides: overrides };
+  }),
+  resetTrunkOverride: (carId) => set((s) => {
+    const overrides = { ...s.trunkOverrides };
+    delete overrides[carId];
+    localStorage.setItem('trunkOverrides', JSON.stringify(overrides));
+    return { trunkOverrides: overrides };
+  }),
+  exportTrunkOverrides: () => {
+    const overrides = useStore.getState().trunkOverrides;
+    console.log('=== TRUNK OVERRIDES (paste into cars.js) ===');
+    console.log(JSON.stringify(overrides, null, 2));
+    return overrides;
+  },
+
   setSelectedObject: (objectId) => set({ selectedObjectId: objectId }),
 
   addObject: (objectId, customDims) => {
@@ -107,5 +129,18 @@ const useStore = create((set, get) => ({
     }));
   },
 }));
+
+// Helper to get trunk with overrides applied
+export function getTrunkWithOverrides(car, carId, rearSeatsDown, overrides) {
+  const baseTrunk = rearSeatsDown ? car.rearFolded : car.trunk;
+  const ov = overrides[carId];
+  if (!ov) return baseTrunk;
+  return {
+    ...baseTrunk,
+    offsetX: ov.offsetX ?? baseTrunk.offsetX,
+    offsetY: ov.offsetY ?? baseTrunk.offsetY,
+    offsetZ: ov.offsetZ ?? baseTrunk.offsetZ,
+  };
+}
 
 export default useStore;

@@ -3,7 +3,7 @@ import { useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import * as THREE from 'three';
-import useStore from '../store/useStore';
+import useStore, { getTrunkWithOverrides } from '../store/useStore';
 import { cars } from '../data/cars';
 
 const dracoLoader = new DRACOLoader();
@@ -15,8 +15,9 @@ export default function CarModel() {
   const rearSeatsDown = useStore((s) => s.rearSeatsDown);
   const trunkOpen = useStore((s) => s.trunkOpen);
   const carOpacity = useStore((s) => s.carOpacity);
+  const trunkOverrides = useStore((s) => s.trunkOverrides);
   const car = cars[selectedCarId];
-  const trunk = rearSeatsDown ? car.rearFolded : car.trunk;
+  const trunk = getTrunkWithOverrides(car, selectedCarId, rearSeatsDown, trunkOverrides);
 
   const gltf = useLoader(GLTFLoader, car.modelPath, (loader) => {
     loader.setDRACOLoader(dracoLoader);
