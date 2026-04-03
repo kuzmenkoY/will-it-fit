@@ -69,7 +69,7 @@ export default function DraggableObject({ obj, isSelected }) {
     }
   }, [fits, material]);
 
-  const { ew, eh, ed } = getEffectiveDims(obj.width, obj.height, obj.depth, obj.rotation);
+  const maxDim = Math.max(obj.width, obj.height, obj.depth);
 
   return (
     <group>
@@ -104,7 +104,7 @@ export default function DraggableObject({ obj, isSelected }) {
 
       {/* Label above object */}
       <Html
-        position={[obj.position[0], obj.position[1] + eh / 2 + 0.1, obj.position[2]]}
+        position={[obj.position[0], obj.position[1] + maxDim / 2 + 0.1, obj.position[2]]}
         center
       >
         <div style={{
