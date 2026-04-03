@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, Suspense } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
@@ -8,16 +8,6 @@ import { cars } from '../data/cars';
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
-
-// Is this car a frunk (front trunk) car?
-const FRUNK_CARS = new Set([
-  'bmw-i8-2015', 'tesla-roadster-2020', 'audi-r8',
-  'porsche-cayman-s-2014', 'ferrari-488-gtb', 'ferrari-f8-tributo',
-  'lamborghini-aventador-svj', 'lamborghini-huracan-gt', 'honda-nsx-1990',
-  'ford-gt40', 'chevrolet-corvette-c8', 'bugatti-bolide-2024', 'mclaren-720s',
-]);
-
-const TRUCK_CARS = new Set(['ford-f150-raptor-2018', 'tesla-cybertruck']);
 
 export default function CarModel() {
   const groupRef = useRef();
@@ -31,57 +21,43 @@ export default function CarModel() {
     loader.setDRACOLoader(dracoLoader);
   });
 
-  const { scaledScene, autoTrunk } = useMemo(() => {
+  // Load Blender-extracted trunk if available
+  const trunkPath = car.accurateTrunkPath || null;
+  const trunkGltf = trunkPath ? useLoader(GLTFLoader, trunkPath) : null;
+
+  const { scaledScene, scaleFactor, sceneOffset, autoTrunk } = useMemo(() => {
     const scene = gltf.scene.clone(true);
     const box = new THREE.Box3().setFromObject(scene);
     const modelSize = new THREE.Vector3();
     box.getSize(modelSize);
 
     const longestAxis = Math.max(modelSize.x, modelSize.y, modelSize.z);
-    const scaleFactor = car.exterior.length / longestAxis;
-    scene.scale.setScalar(scaleFactor);
+    const sf = car.exterior.length / longestAxis;
+    scene.scale.setScalar(sf);
 
     const scaledBox = new THREE.Box3().setFromObject(scene);
     const scaledCenter = new THREE.Vector3();
     scaledBox.getCenter(scaledCenter);
     const scaledMin = scaledBox.min;
 
-    // Center on X/Z, Y=0 at ground
-    scene.position.set(-scaledCenter.x, -scaledMin.y, -scaledCenter.z);
+    const offset = new THREE.Vector3(-scaledCenter.x, -scaledMin.y, -scaledCenter.z);
+    scene.position.copy(offset);
 
-    // Get final bounds after centering
+    // Compute auto trunk from bounding box (fallback when no accurate trunk)
     const finalBox = new THREE.Box3().setFromObject(scene);
     const carMin = finalBox.min;
     const carMax = finalBox.max;
     const carHeight = carMax.y - carMin.y;
-    const carLength = carMax.z - carMin.z;
+    const carLengthZ = carMax.z - carMin.z;
 
-    // Simple trunk positioning:
-    // After centering, car goes from carMin.z (one end) to carMax.z (other end)
-    // Most negative Z = rear, most positive Z = front (for most models)
-    // But some models face the other way - we don't know!
-    // Solution: use the KNOWN trunk dimensions and just place at the correct end
+    // Place trunk at the nearest end of the car (5% inset from edge)
+    const isFrunk = (car.trunk.offsetZ || 0) > 0;
+    const trunkCenterZ = isFrunk
+      ? carMax.z - trunkDims.length / 2 - carLengthZ * 0.05
+      : carMin.z + trunkDims.length / 2 + carLengthZ * 0.05;
+    const trunkFloorY = carHeight * 0.22;
 
-    let trunkCenterZ, trunkFloorY;
-    const isFrunk = FRUNK_CARS.has(selectedCarId);
-    const isTruck = TRUCK_CARS.has(selectedCarId);
-
-    if (isFrunk) {
-      // Front trunk: near positive Z end
-      trunkCenterZ = carMax.z - trunkDims.length / 2 - carLength * 0.05;
-    } else {
-      // Rear trunk: near negative Z end
-      trunkCenterZ = carMin.z + trunkDims.length / 2 + carLength * 0.05;
-    }
-
-    if (isTruck) {
-      trunkFloorY = carHeight * 0.38;
-    } else {
-      // Trunk floor is typically at ~20-25% of car height
-      trunkFloorY = carHeight * 0.22;
-    }
-
-    const autoTrunkPos = {
+    const at = {
       width: trunkDims.width,
       height: trunkDims.height,
       length: trunkDims.length,
@@ -90,38 +66,100 @@ export default function CarModel() {
       offsetZ: trunkCenterZ,
     };
 
-    return { scaledScene: scene, autoTrunk: autoTrunkPos };
-  }, [gltf, car, selectedCarId, trunkDims]);
+    return { scaledScene: scene, scaleFactor: sf, sceneOffset: offset, autoTrunk: at };
+  }, [gltf, car, trunkDims]);
+
+  // If we have a Blender-extracted trunk, apply the SAME transform as the car
+  const scaledTrunkScene = useMemo(() => {
+    if (!trunkGltf) return null;
+    const scene = trunkGltf.scene.clone(true);
+    scene.scale.setScalar(scaleFactor);
+    scene.position.copy(sceneOffset);
+    return scene;
+  }, [trunkGltf, scaleFactor, sceneOffset]);
 
   // Share computed trunk with other components
   const setComputedTrunk = useStore((s) => s.setComputedTrunk);
   useEffect(() => {
-    setComputedTrunk(autoTrunk);
-  }, [autoTrunk, setComputedTrunk]);
+    if (scaledTrunkScene) {
+      // Get trunk bounds from the actual Blender-extracted mesh
+      const trunkBox = new THREE.Box3().setFromObject(scaledTrunkScene);
+      const trunkSize = new THREE.Vector3();
+      trunkBox.getSize(trunkSize);
+      const trunkCenter = new THREE.Vector3();
+      trunkBox.getCenter(trunkCenter);
+
+      setComputedTrunk({
+        width: trunkSize.x,
+        height: trunkSize.y,
+        length: trunkSize.z,
+        offsetX: trunkCenter.x,
+        offsetY: trunkBox.min.y,
+        offsetZ: trunkCenter.z,
+      });
+    } else {
+      setComputedTrunk(autoTrunk);
+    }
+  }, [scaledTrunkScene, autoTrunk, setComputedTrunk]);
 
   return (
     <group ref={groupRef}>
       <primitive object={scaledScene} />
       <TransparentOverride scene={scaledScene} color={car.color} opacity={carOpacity} />
-      <BoxTrunk trunk={autoTrunk} />
+
+      {scaledTrunkScene ? (
+        <group>
+          <primitive object={scaledTrunkScene} />
+          <TrunkMeshOverride scene={scaledTrunkScene} />
+        </group>
+      ) : (
+        <BoxTrunk trunk={autoTrunk} />
+      )}
     </group>
   );
+}
+
+// Green wireframe for Blender-extracted trunk mesh
+function TrunkMeshOverride({ scene }) {
+  useEffect(() => {
+    const edgeMat = new THREE.LineBasicMaterial({ color: '#00ff88', linewidth: 2 });
+    const fillMat = new THREE.MeshBasicMaterial({
+      color: '#00ff88', transparent: true, opacity: 0.15, side: THREE.DoubleSide
+    });
+
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material = fillMat;
+        const edges = new THREE.EdgesGeometry(child.geometry, 15);
+        const line = new THREE.LineSegments(edges, edgeMat);
+        child.add(line);
+      }
+    });
+
+    return () => {
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          const toRemove = [];
+          child.children.forEach((c) => { if (c.isLineSegments) toRemove.push(c); });
+          toRemove.forEach((c) => { child.remove(c); c.geometry.dispose(); });
+        }
+      });
+    };
+  }, [scene]);
+  return null;
 }
 
 function BoxTrunk({ trunk }) {
   return (
     <group>
-      {/* Wireframe */}
       <mesh position={[trunk.offsetX, trunk.offsetY + trunk.height / 2, trunk.offsetZ]} renderOrder={10}>
         <boxGeometry args={[trunk.width, trunk.height, trunk.length]} />
         <meshBasicMaterial color="#00ff88" wireframe />
       </mesh>
-      {/* Fill */}
       <mesh position={[trunk.offsetX, trunk.offsetY + trunk.height / 2, trunk.offsetZ]} renderOrder={9}>
         <boxGeometry args={[trunk.width - 0.005, trunk.height - 0.005, trunk.length - 0.005]} />
         <meshBasicMaterial color="#00ff88" transparent opacity={0.15} side={THREE.DoubleSide} />
       </mesh>
-      {/* Floor */}
       <mesh position={[trunk.offsetX, trunk.offsetY + 0.005, trunk.offsetZ]} renderOrder={11}>
         <boxGeometry args={[trunk.width - 0.01, 0.01, trunk.length - 0.01]} />
         <meshBasicMaterial color="#00ff88" transparent opacity={0.4} />
@@ -137,15 +175,10 @@ function TransparentOverride({ scene, color, opacity }) {
       transparent: true,
       opacity: Math.min(opacity * 6, 0.7),
     });
-
     const bodyMaterial = new THREE.MeshStandardMaterial({
-      color: color,
-      transparent: true,
-      opacity: opacity,
-      roughness: 0.3,
-      metalness: 0.5,
-      side: THREE.DoubleSide,
-      depthWrite: false,
+      color, transparent: true, opacity,
+      roughness: 0.3, metalness: 0.5,
+      side: THREE.DoubleSide, depthWrite: false,
     });
 
     scene.traverse((child) => {
@@ -155,11 +188,9 @@ function TransparentOverride({ scene, color, opacity }) {
         child.children.forEach((c) => { if (c.isLineSegments) toRemove.push(c); });
         toRemove.forEach((c) => { child.remove(c); c.geometry.dispose(); });
         const edges = new THREE.EdgesGeometry(child.geometry, 18);
-        const line = new THREE.LineSegments(edges, edgeMaterial);
-        child.add(line);
+        child.add(new THREE.LineSegments(edges, edgeMaterial));
       }
     });
-
     return () => {
       scene.traverse((child) => {
         if (child.isMesh) {
@@ -170,6 +201,5 @@ function TransparentOverride({ scene, color, opacity }) {
       });
     };
   }, [scene, color, opacity]);
-
   return null;
 }

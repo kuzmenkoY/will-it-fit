@@ -32,6 +32,7 @@ export const cars = {
   'bmw-m3-sedan': {
     name: 'BMW M3 Sedan (G80)',
     modelPath: '/models/bmw_m3_sedan_opt.glb',
+    accurateTrunkPath: '/models/trunks/bmw_m3_trunk_accurate.glb',
     exterior: { length: 4.794, width: 1.903, height: 1.433 },
     trunk: { length: 1.00, width: 1.30, height: 0.48, offsetX: 0, offsetY: 0.30, offsetZ: -1.65 },
     rearFolded: { length: 1.75, width: 1.30, height: 0.52, offsetX: 0, offsetY: 0.32, offsetZ: -1.05 },
