@@ -18,10 +18,11 @@ export default function DraggableObject({ obj, isSelected }) {
 
   // Use Three.js bounding box for proper rotated-object fit detection
   useFrame(() => {
-    if (!meshRef.current) return;
+    if (!meshRef.current || !trunk) return;
 
     // Get the world-space AABB of the rotated mesh
     const objBox = new THREE.Box3().setFromObject(meshRef.current);
+    if (objBox.isEmpty()) return;
 
     // Trunk bounding box
     const tMinX = trunk.offsetX - trunk.width / 2;

@@ -54,11 +54,13 @@ export default function Sidebar() {
       <div style={styles.section}>
         <div style={styles.sectionHeader}>Cargo Space</div>
         <div style={styles.dims}>
-          {(trunk.width * 100).toFixed(0)} x {(trunk.length * 100).toFixed(0)} x {(trunk.height * 100).toFixed(0)} cm
+          {trunk ? `${(trunk.width * 100).toFixed(0)} x ${(trunk.length * 100).toFixed(0)} x ${(trunk.height * 100).toFixed(0)} cm` : 'Loading...'}
         </div>
-        <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', marginBottom: 8 }}>
-          Diagonal: {(Math.sqrt(trunk.width**2 + trunk.length**2 + trunk.height**2) * 100).toFixed(0)} cm max
-        </div>
+        {trunk && (
+          <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', marginBottom: 8 }}>
+            Diagonal: {(Math.sqrt(trunk.width**2 + trunk.length**2 + trunk.height**2) * 100).toFixed(0)} cm max
+          </div>
+        )}
         <label style={styles.checkbox}>
           <input
             type="checkbox"
