@@ -1,0 +1,272 @@
+{
+  "toyota-supra-mk4": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": -1.63
+  },
+  "toyota-supra-mk5": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": -1.58
+  },
+  "toyota-land-cruiser-300": {
+    "type": "suv",
+    "offsetX": 0,
+    "offsetY": 0.5,
+    "offsetZ": -1.6
+  },
+  "bmw-3-series-2018": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.58
+  },
+  "bmw-m3-sedan": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.32,
+    "offsetZ": -1.63
+  },
+  "bmw-m4-2021": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.68
+  },
+  "bmw-m8-2020": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.3,
+    "offsetZ": -1.7
+  },
+  "bmw-i8-2015": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": 1.64
+  },
+  "bmw-x6m": {
+    "type": "suv",
+    "offsetX": 0,
+    "offsetY": 0.44,
+    "offsetZ": -1.59
+  },
+  "vw-golf-ii": {
+    "type": "hatchback",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.21
+  },
+  "tesla-roadster-2020": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.25,
+    "offsetZ": 1.64
+  },
+  "tesla-cybertruck": {
+    "type": "truck",
+    "offsetX": 0,
+    "offsetY": 0.64,
+    "offsetZ": -1.59
+  },
+  "audi-r8": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": 1.55
+  },
+  "audi-rs7-2014": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.69
+  },
+  "mercedes-amg-gt": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": -1.64
+  },
+  "porsche-cayman-s-2014": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": 1.53
+  },
+  "porsche-panamera-2021": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.72
+  },
+  "porsche-taycan-turbo-s": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.3,
+    "offsetZ": -1.69
+  },
+  "ferrari-488-gtb": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": 1.6
+  },
+  "ferrari-599": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.29,
+    "offsetZ": -1.68
+  },
+  "ferrari-f8-tributo": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": 1.61
+  },
+  "lamborghini-aventador-svj": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.25,
+    "offsetZ": 1.73
+  },
+  "lamborghini-huracan-gt": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.26,
+    "offsetZ": 1.58
+  },
+  "honda-civic-type-r-2024": {
+    "type": "hatchback",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.38
+  },
+  "honda-nsx-1990": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.26,
+    "offsetZ": 1.55
+  },
+  "ford-mustang-gt-1968": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.29,
+    "offsetZ": -1.61
+  },
+  "ford-f150-raptor-2018": {
+    "type": "truck",
+    "offsetX": 0,
+    "offsetY": 0.71,
+    "offsetZ": -1.65
+  },
+  "ford-gt40": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.23,
+    "offsetZ": 1.45
+  },
+  "dodge-challenger-rt": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.32,
+    "offsetZ": -1.76
+  },
+  "dodge-challenger-hellcat": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.32,
+    "offsetZ": -1.76
+  },
+  "chevrolet-camaro-ss-2016": {
+    "type": "coupe",
+    "offsetX": 0,
+    "offsetY": 0.3,
+    "offsetZ": -1.67
+  },
+  "chevrolet-corvette-c8": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": 1.62
+  },
+  "hyundai-sonata-2009": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.32,
+    "offsetZ": -1.63
+  },
+  "hyundai-tucson-2015": {
+    "type": "suv",
+    "offsetX": 0,
+    "offsetY": 0.43,
+    "offsetZ": -1.43
+  },
+  "hyundai-elantra-n-2022": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.58
+  },
+  "hyundai-veloster-n": {
+    "type": "hatchback",
+    "offsetX": 0,
+    "offsetY": 0.31,
+    "offsetZ": -1.27
+  },
+  "hyundai-creta-2016": {
+    "type": "suv",
+    "offsetX": 0,
+    "offsetY": 0.42,
+    "offsetZ": -1.37
+  },
+  "subaru-impreza-wrx": {
+    "type": "sedan",
+    "offsetX": 0,
+    "offsetY": 0.32,
+    "offsetZ": -1.52
+  },
+  "mazda-rx7": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": -1.54
+  },
+  "bugatti-bolide-2024": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.27,
+    "offsetZ": 1.66
+  },
+  "aston-martin-vantage": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.28,
+    "offsetZ": -1.61
+  },
+  "mclaren-720s": {
+    "type": "mid_engine",
+    "offsetX": 0,
+    "offsetY": 0.26,
+    "offsetZ": 1.59
+  },
+  "maserati-granturismo": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.3,
+    "offsetZ": -1.76
+  },
+  "nissan-370z": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.29,
+    "offsetZ": -1.53
+  },
+  "nissan-gtr-r35": {
+    "type": "sports_rear",
+    "offsetX": 0,
+    "offsetY": 0.3,
+    "offsetZ": -1.7
+  }
+}
