@@ -16,6 +16,10 @@ export default function Sidebar() {
   const setSelectedCar = useStore((s) => s.setSelectedCar);
   const selectedPlacedIndex = useStore((s) => s.selectedPlacedIndex);
   const setSelectedPlacedIndex = useStore((s) => s.setSelectedPlacedIndex);
+  const trunkOpen = useStore((s) => s.trunkOpen);
+  const toggleTrunkOpen = useStore((s) => s.toggleTrunkOpen);
+  const carOpacity = useStore((s) => s.carOpacity);
+  const setCarOpacity = useStore((s) => s.setCarOpacity);
 
   const [customW, setCustomW] = useState(50);
   const [customH, setCustomH] = useState(50);
@@ -60,6 +64,32 @@ export default function Sidebar() {
           />
           Fold rear seats down
         </label>
+        <label style={{ ...styles.checkbox, marginTop: 6 }}>
+          <input
+            type="checkbox"
+            checked={trunkOpen}
+            onChange={toggleTrunkOpen}
+          />
+          Open trunk (cut-away view)
+        </label>
+      </div>
+
+      {/* Visibility */}
+      <div style={styles.section}>
+        <div style={styles.sectionHeader}>Car Visibility</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 11, color: '#666', minWidth: 45 }}>Ghost</span>
+          <input
+            type="range"
+            min="0"
+            max="0.4"
+            step="0.02"
+            value={carOpacity}
+            onChange={(e) => setCarOpacity(parseFloat(e.target.value))}
+            style={styles.slider}
+          />
+          <span style={{ fontSize: 11, color: '#666', minWidth: 45 }}>Solid</span>
+        </div>
       </div>
 
       {/* Object catalog */}
@@ -242,6 +272,11 @@ const styles = {
     backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath d=\'M6 8L1 3h10z\' fill=\'%23888\'/%3E%3C/svg%3E")',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 12px center',
+  },
+  slider: {
+    flex: 1,
+    cursor: 'pointer',
+    accentColor: '#3b82f6',
   },
   dims: {
     fontFamily: 'monospace',

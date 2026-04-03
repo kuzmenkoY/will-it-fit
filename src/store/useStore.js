@@ -6,6 +6,8 @@ const useStore = create((set, get) => ({
   // Car state
   selectedCarId: defaultCar,
   rearSeatsDown: false,
+  trunkOpen: false,
+  carOpacity: 0.1, // 0 = invisible, 1 = solid
 
   // Placed objects in the scene
   placedObjects: [],
@@ -31,6 +33,8 @@ const useStore = create((set, get) => ({
     return { selectedPlacedIndex: next };
   }),
   toggleRearSeats: () => set((s) => ({ rearSeatsDown: !s.rearSeatsDown })),
+  toggleTrunkOpen: () => set((s) => ({ trunkOpen: !s.trunkOpen })),
+  setCarOpacity: (v) => set({ carOpacity: v }),
 
   setSelectedObject: (objectId) => set({ selectedObjectId: objectId }),
 
