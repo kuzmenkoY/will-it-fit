@@ -56,6 +56,9 @@ export default function Sidebar() {
         <div style={styles.dims}>
           {(trunk.width * 100).toFixed(0)} x {(trunk.length * 100).toFixed(0)} x {(trunk.height * 100).toFixed(0)} cm
         </div>
+        <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#94a3b8', marginBottom: 8 }}>
+          Diagonal: {(Math.sqrt(trunk.width**2 + trunk.length**2 + trunk.height**2) * 100).toFixed(0)} cm max
+        </div>
         <label style={styles.checkbox}>
           <input
             type="checkbox"
@@ -200,10 +203,11 @@ export default function Sidebar() {
         <div>Arrow keys: move item (5cm)</div>
         <div>Shift+Arrow: fine move (1cm)</div>
         <div>W/S: move up/down</div>
-        <div>R: rotate item</div>
+        <div>R: flip orientation</div>
+        <div>Q: spin (rotate Y axis)</div>
+        <div>E: tilt (angle for diagonal)</div>
         <div>Tab: cycle selected item</div>
         <div>Mouse: orbit camera</div>
-        <div>Scroll: zoom</div>
       </div>
     </div>
   );

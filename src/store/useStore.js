@@ -72,18 +72,28 @@ const useStore = create((set, get) => ({
     }));
   },
 
-  rotateObject: (instanceId) => {
+  // Rotate object - axis: 'flip' (cycle tilt), 'spin' (Y-axis 15deg), 'tilt' (fine angle)
+  rotateObject: (instanceId, axis = 'flip') => {
     set((s) => ({
       placedObjects: s.placedObjects.map((o) => {
         if (o.instanceId !== instanceId) return o;
         const [rx, ry, rz] = o.rotation;
         let newRotation;
-        if (rx === 0 && rz === 0) {
-          newRotation = [Math.PI / 2, ry, 0];
-        } else if (Math.abs(rx - Math.PI / 2) < 0.01) {
-          newRotation = [0, ry, Math.PI / 2];
+        if (axis === 'spin') {
+          // Spin on Y axis by 15 degrees
+          newRotation = [rx, ry + Math.PI / 12, rz];
+        } else if (axis === 'tilt') {
+          // Tilt on X axis by 15 degrees (for diagonal loading)
+          newRotation = [rx + Math.PI / 12, ry, rz];
         } else {
-          newRotation = [0, ry, 0];
+          // Flip: cycle through orientations
+          if (rx === 0 && rz === 0) {
+            newRotation = [Math.PI / 2, ry, 0]; // lay on back
+          } else if (Math.abs(rx - Math.PI / 2) < 0.1) {
+            newRotation = [0, ry, Math.PI / 2]; // lay on side
+          } else {
+            newRotation = [0, ry, 0]; // upright
+          }
         }
         return { ...o, rotation: newRotation };
       }),

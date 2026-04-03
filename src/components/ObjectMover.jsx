@@ -47,7 +47,15 @@ export default function ObjectMover() {
           pos[1] -= step;
           break;
         case 'r':
-          state.rotateObject(obj.instanceId);
+          state.rotateObject(obj.instanceId, 'flip');
+          return;
+        case 'q':
+          // Spin on Y axis (turn item like a steering wheel)
+          state.rotateObject(obj.instanceId, 'spin');
+          return;
+        case 'e':
+          // Tilt on X axis (angle item for diagonal loading)
+          state.rotateObject(obj.instanceId, 'tilt');
           return;
         default:
           return;

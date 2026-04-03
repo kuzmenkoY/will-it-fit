@@ -16,26 +16,14 @@ export default function DraggableObject({ obj, isSelected }) {
 
   const [fits, setFits] = useState(null);
 
-  const getEffectiveDims = (w, h, d, rotation) => {
-    const [rx, , rz] = rotation;
-    if (Math.abs(rx - Math.PI / 2) < 0.1) return { ew: w, eh: d, ed: h };
-    if (Math.abs(rz - Math.PI / 2) < 0.1) return { ew: h, eh: w, ed: d };
-    return { ew: w, eh: h, ed: d };
-  };
-
+  // Use Three.js bounding box for proper rotated-object fit detection
   useFrame(() => {
     if (!meshRef.current) return;
 
-    const pos = obj.position;
-    const { ew, eh, ed } = getEffectiveDims(obj.width, obj.height, obj.depth, obj.rotation);
+    // Get the world-space AABB of the rotated mesh
+    const objBox = new THREE.Box3().setFromObject(meshRef.current);
 
-    const objMinX = pos[0] - ew / 2;
-    const objMaxX = pos[0] + ew / 2;
-    const objMinY = pos[1] - eh / 2;
-    const objMaxY = pos[1] + eh / 2;
-    const objMinZ = pos[2] - ed / 2;
-    const objMaxZ = pos[2] + ed / 2;
-
+    // Trunk bounding box
     const tMinX = trunk.offsetX - trunk.width / 2;
     const tMaxX = trunk.offsetX + trunk.width / 2;
     const tMinY = trunk.offsetY;
@@ -43,13 +31,14 @@ export default function DraggableObject({ obj, isSelected }) {
     const tMinZ = trunk.offsetZ - trunk.length / 2;
     const tMaxZ = trunk.offsetZ + trunk.length / 2;
 
+    const tolerance = 0.02; // 2cm tolerance
     const isInside =
-      objMinX >= tMinX - 0.01 &&
-      objMaxX <= tMaxX + 0.01 &&
-      objMinY >= tMinY - 0.01 &&
-      objMaxY <= tMaxY + 0.01 &&
-      objMinZ >= tMinZ - 0.01 &&
-      objMaxZ <= tMaxZ + 0.01;
+      objBox.min.x >= tMinX - tolerance &&
+      objBox.max.x <= tMaxX + tolerance &&
+      objBox.min.y >= tMinY - tolerance &&
+      objBox.max.y <= tMaxY + tolerance &&
+      objBox.min.z >= tMinZ - tolerance &&
+      objBox.max.z <= tMaxZ + tolerance;
 
     if (fits !== isInside) {
       setFits(isInside);
