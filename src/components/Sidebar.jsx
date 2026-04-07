@@ -19,6 +19,8 @@ export default function Sidebar() {
   const setSelectedPlacedIndex = useStore((s) => s.setSelectedPlacedIndex);
   const carOpacity = useStore((s) => s.carOpacity);
   const setCarOpacity = useStore((s) => s.setCarOpacity);
+  const trunkOpen = useStore((s) => s.trunkOpen);
+  const toggleTrunkOpen = useStore((s) => s.toggleTrunkOpen);
 
   const [customW, setCustomW] = useState(50);
   const [customH, setCustomH] = useState(50);
@@ -69,6 +71,16 @@ export default function Sidebar() {
           />
           Fold rear seats (larger cargo area)
         </label>
+        {car.openTrunkModelPath && (
+          <label style={styles.checkbox}>
+            <input
+              type="checkbox"
+              checked={trunkOpen}
+              onChange={toggleTrunkOpen}
+            />
+            Open trunk lid
+          </label>
+        )}
       </div>
 
       {/* Trunk position tuning */}

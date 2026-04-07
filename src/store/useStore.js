@@ -6,6 +6,7 @@ const useStore = create((set, get) => ({
   // Car state
   selectedCarId: defaultCar,
   rearSeatsDown: false,
+  trunkOpen: false,
   carOpacity: 0.1,
 
   // Computed trunk position (set by CarModel after loading the 3D model)
@@ -29,6 +30,7 @@ const useStore = create((set, get) => ({
     return { selectedPlacedIndex: next };
   }),
   toggleRearSeats: () => set((s) => ({ rearSeatsDown: !s.rearSeatsDown })),
+  toggleTrunkOpen: () => set((s) => ({ trunkOpen: !s.trunkOpen })),
   setCarOpacity: (v) => set({ carOpacity: v }),
   setComputedTrunk: (trunk) => set({ computedTrunk: trunk }),
 

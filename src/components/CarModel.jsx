@@ -14,13 +14,22 @@ export default function CarModel() {
   const groupRef = useRef();
   const selectedCarId = useStore((s) => s.selectedCarId);
   const rearSeatsDown = useStore((s) => s.rearSeatsDown);
+  const trunkOpen = useStore((s) => s.trunkOpen);
   const carOpacity = useStore((s) => s.carOpacity);
   const car = cars[selectedCarId];
   const trunkDims = rearSeatsDown ? car.rearFolded : car.trunk;
 
-  const gltf = useLoader(GLTFLoader, car.modelPath, (loader) => {
+  // Use open-trunk model variant if available and toggled on
+  const modelPath = (trunkOpen && car.openTrunkModelPath) ? car.openTrunkModelPath : car.modelPath;
+  const gltf = useLoader(GLTFLoader, modelPath, (loader) => {
     loader.setDRACOLoader(dracoLoader);
   });
+
+  // Load Blender-extracted trunk if available
+  const blenderTrunkPath = car.blenderTrunkPath || null;
+  const trunkGltf = blenderTrunkPath
+    ? useLoader(GLTFLoader, blenderTrunkPath)
+    : null;
 
   const { scaledScene, scaleFactor, sceneOffset, autoTrunk } = useMemo(() => {
     const scene = gltf.scene.clone(true);
@@ -54,20 +63,84 @@ export default function CarModel() {
     return { scaledScene: scene, scaleFactor: sf, sceneOffset: offset, autoTrunk: at };
   }, [gltf, car, trunkDims, selectedCarId]);
 
+  // If Blender trunk available, apply same transform as car (same coordinate space)
+  const scaledTrunkScene = useMemo(() => {
+    if (!trunkGltf) return null;
+    const scene = trunkGltf.scene.clone(true);
+    scene.scale.setScalar(scaleFactor);
+    scene.position.copy(sceneOffset);
+    return scene;
+  }, [trunkGltf, scaleFactor, sceneOffset]);
+
   // Share computed trunk with other components
   const setComputedTrunk = useStore((s) => s.setComputedTrunk);
   useEffect(() => {
-    setComputedTrunk(autoTrunk);
-  }, [autoTrunk, setComputedTrunk]);
+    if (scaledTrunkScene) {
+      // Use actual Blender trunk bounds for fit detection
+      const trunkBox = new THREE.Box3().setFromObject(scaledTrunkScene);
+      const trunkSize = new THREE.Vector3();
+      trunkBox.getSize(trunkSize);
+      const trunkCenter = new THREE.Vector3();
+      trunkBox.getCenter(trunkCenter);
+      setComputedTrunk({
+        width: trunkSize.x,
+        height: trunkSize.y,
+        length: trunkSize.z,
+        offsetX: trunkCenter.x,
+        offsetY: trunkBox.min.y,
+        offsetZ: trunkCenter.z,
+      });
+    } else {
+      setComputedTrunk(autoTrunk);
+    }
+  }, [scaledTrunkScene, autoTrunk, setComputedTrunk]);
 
   return (
     <group ref={groupRef}>
       <primitive object={scaledScene} />
       <TransparentOverride scene={scaledScene} color={car.color} opacity={carOpacity} />
 
-      <TrunkShape carScene={scaledScene} trunk={autoTrunk} />
+      {scaledTrunkScene ? (
+        <BlenderTrunk scene={scaledTrunkScene} />
+      ) : (
+        <TrunkShape carScene={scaledScene} trunk={autoTrunk} />
+      )}
     </group>
   );
+}
+
+// Blender-extracted trunk: render with green wireframe + transparent fill
+function BlenderTrunk({ scene }) {
+  useEffect(() => {
+    const edgeMat = new THREE.LineBasicMaterial({ color: '#00ff88', linewidth: 2 });
+    const fillMat = new THREE.MeshBasicMaterial({
+      color: '#00ff88', transparent: true, opacity: 0.15,
+      side: THREE.DoubleSide, depthWrite: false,
+    });
+
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        child.material = fillMat;
+        child.renderOrder = 9;
+        const edges = new THREE.EdgesGeometry(child.geometry, 15);
+        const line = new THREE.LineSegments(edges, edgeMat);
+        line.renderOrder = 10;
+        child.add(line);
+      }
+    });
+
+    return () => {
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          const toRemove = [];
+          child.children.forEach((c) => { if (c.isLineSegments) toRemove.push(c); });
+          toRemove.forEach((c) => { child.remove(c); c.geometry.dispose(); });
+        }
+      });
+    };
+  }, [scene]);
+
+  return <primitive object={scene} />;
 }
 
 // Raycast helper: find nearest hit distance from origin in direction

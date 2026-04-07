@@ -22,11 +22,13 @@ export const cars = {
   'bmw-3-series-2018': {
     name: 'BMW 3 Series (2018)',
     modelPath: '/models/bmw_2018_opt.glb',
+    openTrunkModelPath: '/models/bmw_2018_open_trunk_opt.glb',
+    blenderTrunkPath: '/models/trunks/bmw_3series_trunk_blender.glb',
     trunkModelPath: '/models/trunks/bmw_2018_trunk.glb',
     trunkFoldedModelPath: '/models/trunks/bmw_2018_trunk_folded.glb',
     exterior: { length: 4.633, width: 1.811, height: 1.429 },
-    trunk: { length: 1.00, width: 1.25, height: 0.48, offsetX: 0, offsetY: 0.30, offsetZ: -1.60 },
-    rearFolded: { length: 1.70, width: 1.25, height: 0.52, offsetX: 0, offsetY: 0.32, offsetZ: -1.05 },
+    trunk: { length: 1.00, width: 1.12, height: 0.48, offsetX: 0, offsetY: 0.30, offsetZ: -1.60 },
+    rearFolded: { length: 1.70, width: 1.12, height: 0.52, offsetX: 0, offsetY: 0.32, offsetZ: -1.05 },
     color: '#60a5fa',
   },
   'bmw-m3-sedan': {
